@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
-import { User, ChevronDown, Download, Save, Bell, LogOut } from 'lucide-react';
+import { User,Gauge, ChevronDown, Download, Save, Bell, LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserole] = useState(null);
   const router = useRouter();
   const [isOpenUser, setIsOpenUser] = useState(false);
   const dropdownRef = useRef(null);
@@ -22,7 +23,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+        setIsOpenUser(false);
       }
     };
 
@@ -37,6 +38,8 @@ const Navbar = () => {
       try {
         const res = await axios.get('/api/auth/me', { withCredentials: true });
         setIsLoggedIn(res.data.loggedIn);
+        console.log(res.data.role);
+        setUserole(res.data.role);
       } catch (err) {
         console.error("errrorrrrrrrr :", err);
         setIsLoggedIn(false);
@@ -65,7 +68,6 @@ const Navbar = () => {
       console.error(error);
     }
   };
-
 
       const commonClasses = "text-gray-700 hover:text-teal-600 transition-colors duration-200";
   
@@ -131,7 +133,18 @@ const Navbar = () => {
               <User className="h-5 w-5 mr-3 text-gray-600" />
               <Link href="/profile">Profile</Link>
             </button>
-            
+            {userRole === "doctor"  && (
+            <button className="flex items-center w-full px-4 py-3 text-left text-gray-800 hover:bg-gray-50">
+              <Gauge className="h-5 w-5 mr-3 text-gray-600" />
+              <Link href="/doctor-dashboard">Doctor DashBorad</Link>
+            </button>
+            )}
+            {userRole === "admin"  && (
+            <button className="flex items-center w-full px-4 py-3 text-left text-gray-800 hover:bg-gray-50">
+              <Gauge className="h-5 w-5 mr-3 text-gray-600" />
+              <Link href="/admin-dashboard">Admin DashBorad</Link>
+            </button>
+            )}
             <button className="flex items-center w-full px-4 py-3 text-left text-gray-800 hover:bg-gray-50">
               <Bell className="h-5 w-5 mr-3 text-gray-600" />
               <Link href="/">Notifications</Link>
@@ -173,26 +186,18 @@ const Navbar = () => {
                 <Link href="/available-appointments" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">Appointments</Link>
                 <Link href="/contact" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">Contact Us</Link>
                 <Link href="/about" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">AboutUs</Link>
-                <Link href="/doctor-dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">Doctor Dashboard</Link>
-                <Link href="/admin-dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">Admin Dashboard</Link>
-                <Link href="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">Profile</Link>
-                <Link href="/payment" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50">Payment</Link>
-                <Link href="/register" className="block px-3 py-2 rounded-md text-base font-medium text-teal-600 hover:text-teal-700">Register</Link>
-                <Link href="/login" className="block px-3 py-2 rounded-md text-base font-medium text-teal-600 hover:text-teal-700">Login</Link>
               </div>
+              {!isLoggedIn ? (
               <div className="pt-4 pb-3 border-t border-gray-200">
                 <div className="px-3">
-                  <div className="flex items-center px-3 py-2">
-                    <span className="text-gray-700">EN</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
                   <Link href="/register" className="mt-2 block w-full px-4 py-2 text-center font-medium text-white bg-teal-500 rounded-full hover:bg-teal-600">
                     Sign Up
                   </Link>
                 </div>
               </div>
+              ):( 
+                <div></div>
+              )};
             </div>
           )}
         </header>

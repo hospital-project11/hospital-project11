@@ -287,7 +287,7 @@ const DoctorDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
+    <div className="min-h-screen mt-15" style={{ backgroundColor: colors.background }}>
       <div className="container mx-auto px-4 py-8">
         {/* Doctor Header */}
         <div className="rounded-xl shadow-md p-6 mb-8" style={{ backgroundColor: colors.primary }}>
@@ -765,13 +765,7 @@ const DoctorDashboard = () => {
             colors={colors}
           />
         )}
-        
-        {/* Footer */}
-        <footer className="text-center py-6">
-          <p style={{ color: colors.text.light }}>
-            © {new Date().getFullYear()} Doctor Dashboard. All rights reserved.
-          </p>
-        </footer>
+
       </div>
     </div>
   );

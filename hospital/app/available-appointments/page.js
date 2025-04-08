@@ -42,23 +42,26 @@ export default function AvailableAppointments() {
       </div>
 
       {appointments.length === 0 ? (
-        <p className="text-center text-gray-600">No appointments available for the selected date.</p>
-      ) : (
-        appointments.map((appt) => (
-          <div key={appt._id} className="border p-4 mb-4 rounded shadow-sm bg-white">
-            <p><strong>Doctor:</strong> {appt.doctorId?.userId?.name}</p>
-            <p><strong>Specialization:</strong> {appt.doctorId?.specialization}</p>
-            <p><strong>Date & Time:</strong> {new Date(appt.appointmentDate).toLocaleString()}</p>
-            <p><strong>Price:</strong> ${appt.doctorId?.price}</p>
-            <button
-              onClick={() => handleBooking(appt._id, appt.doctorId?.price)}
-              className="bg-blue-600 text-white px-4 py-2 mt-3 rounded hover:bg-blue-700"
-            >
-              Book Now
-            </button>
-          </div>
-        ))
-      )}
+  <p className="text-center text-gray-600">No appointments available for the selected date.</p>
+) : (
+  appointments.map((appt, index) => (
+    <div key={appt._id || `${appt.appointmentDate}-${index}`} className="border p-4 mb-4 rounded shadow-sm bg-white">
+      {/* Access the doctor's name, specialization, and price from the doctorId object */}
+      <p><strong>Doctor:</strong> {appt.doctorId?.userId?.name}</p>
+      <p><strong>Specialization:</strong> {appt.doctorId?.specialization}</p>
+      <p><strong>Date & Time:</strong> {new Date(appt.appointmentDate).toLocaleString()}</p>
+      <p><strong>Price:</strong> ${appt.doctorId?.price}</p>
+      <button
+        onClick={() => handleBooking(appt._id, appt.doctorId?.price)}
+        className="bg-blue-600 text-white px-4 py-2 mt-3 rounded hover:bg-blue-700"
+      >
+        Book Now
+      </button>
+    </div>
+  ))
+)}
+
+
     </div>
   );
 }

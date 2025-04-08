@@ -31,7 +31,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto  rounded-lg overflow-hidden pt-15 mb-15">
+    <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto  rounded-lg overflow-hidden pt-22 mb-15">
       {/* Left side - Person Image */}
       <div className="w-full md:w-1/2 bg-gray-100 flex items-center justify-center p-6">
         <img 

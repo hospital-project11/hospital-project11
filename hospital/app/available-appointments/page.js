@@ -18,19 +18,16 @@ export default function AvailableAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [doctorName, setDoctorName] = useState('');  // State for doctor name filter
-  const [selectedCategory, setSelectedCategory] = useState('');  // State for category filter
+  const [doctorName, setDoctorName] = useState('');  
+  const [selectedCategory, setSelectedCategory] = useState('');  
   const router = useRouter();
 
-  // Fetch appointments when the selected date or doctor name or category changes
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const selectedDateString = selectedDate.toISOString().split('T')[0];
-        // Add doctorName and selectedCategory to the query parameters if provided
         const res = await axios.get(`/api/appointments?date=${selectedDateString}&doctorName=${doctorName}&category=${selectedCategory}`);
         
-        // Assuming the server returns appointments for the selected date, update the state
         setAppointments(res.data.appointments);
       } catch (error) {
         console.error('Error fetching appointments:', error);
@@ -40,7 +37,6 @@ export default function AvailableAppointments() {
     fetchAppointments();
   }, [selectedDate, doctorName, selectedCategory]);
 
-  // Filter appointments based on selected date, doctor name, and category
   const filterAppointmentsByDateDoctorAndCategory = () => {
     const selectedDateString = selectedDate.toISOString().split('T')[0];
     const filtered = appointments.filter((appt) => {
@@ -65,11 +61,11 @@ export default function AvailableAppointments() {
   };
 
   const handleDoctorNameChange = (e) => {
-    setDoctorName(e.target.value);  // Update the doctor name filter
+    setDoctorName(e.target.value);
   };
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);  // Update the category filter
+    setSelectedCategory(e.target.value);  
   };
 
   return (

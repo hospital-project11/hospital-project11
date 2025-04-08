@@ -10,30 +10,33 @@ export async function GET(request) {
   
       const { searchParams } = new URL(request.url);
       const date = searchParams.get('date'); 
+      const doctorName = searchParams.get('name'); 
   
       let query = {
         status: 'pending',
         appointmentDate: { $gte: new Date() },
       };
   
-      // If a date is provided, filter by appointmentDate
       if (date) {
         const start = new Date(date);
         const end = new Date(date);
-        end.setHours(23, 59, 59, 999); // Set the end of the day
-        query.appointmentDate = { $gte: start, $lte: end }; // Filter between the date range
+        end.setHours(23, 59, 59, 999); 
+        query.appointmentDate = { $gte: start, $lte: end }; 
       }
   
-      // Populate the correct reference field ('doctorId') and the doctor's details
+      if (doctorName) {
+        query['doctorId.userId.name'] = { $regex: doctorName, $options: 'i' };  
+      }
+  
       const appointments = await Appointment.find(query)
         .populate({
-          path: 'doctorId',  // Correct field that references the Doctor model
-          model: 'Doctor',  // Reference the Doctor model
-          select: 'specialization price availableSlots',  // Select fields from the Doctor model
+          path: 'doctorId',  
+          model: 'Doctor',  
+          select: 'specialization price availableSlots', 
           populate: {
-            path: 'userId',  // Populate the 'userId' inside the Doctor model to get the doctor's name
-            model: 'User',  // Ensure the 'User' model is populated
-            select: 'name',  // Select the doctor's name from the User model
+            path: 'userId', 
+            model: 'User',  
+            select: 'name',  
           },
         });
   
@@ -43,6 +46,7 @@ export async function GET(request) {
       return NextResponse.json({ message: 'Failed to fetch appointments' }, { status: 500 });
     }
   }
+  
 
 export async function POST(request) {
   try {

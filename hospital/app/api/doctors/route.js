@@ -1,133 +1,83 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
-import Appointment from '@/models/appointment'; 
-import jwt from 'jsonwebtoken'; 
-import { cookies } from 'next/headers'; 
-import mongoose from 'mongoose';
-const getDoctorIdFromToken = async () => {
-  const cookieStore = await cookies(); // Get cookies asynchronously
-  const token = cookieStore.get('token')?.value; // Extract token from cookies
+import Appointment from '@/models/appointment';
+import Doctor from '@/models/doctor';
+import { cookies } from 'next/headers';
+import jwt from 'jsonwebtoken';
 
-  if (!token) {
-    throw new Error('Token is required');
-  }
+const getAuthenticatedDoctor = async () => {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
 
-  try {
-    // Decode the token using the JWT secret
-    const decoded = jwt.decode(token); // Decode token to get payload
-    return decoded?.userId; // Return userId from the decoded payload
-  } catch (error) {
-    throw new Error('Failed to decode token');
-  }
+  if (!token) throw new Error('Authentication required');
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  await connectDB();
+  
+  const doctor = await Doctor.findOne({ userId: decoded.userId });
+  if (!doctor) throw new Error('Doctor profile not found');
+
+  return doctor;
 };
+
+export async function GET() {
+  try {
+    const doctor = await getAuthenticatedDoctor();
+    
+    const appointments = await Appointment.find({ doctorId: doctor._id })
+      .populate('patientId', 'name email')
+      .sort({ appointmentDate: 1 });
+
+    return NextResponse.json({
+      success: true,
+      appointments,
+      doctor: {
+        _id: doctor._id,
+        specialization: doctor.specialization,
+        price: doctor.price
+      }
+    });
+
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: error.message.includes('Authentication') ? 401 : 500 }
+    );
+  }
+}
 
 export async function POST(request) {
   try {
-    await connectDB();
+    const doctor = await getAuthenticatedDoctor();
+    const { date, time } = await request.json();
 
-    // Extract doctorId (userId) from JWT token
-    const doctorUserId = await getDoctorIdFromToken(); // This is the userId of the doctor from JWT
-    console.log('Doctor userId extracted from JWT:', doctorUserId); // Log doctor userId for debugging
-
-    if (!doctorUserId) {
-      return NextResponse.json({ success: false, error: 'Doctor not logged in' }, { status: 400 });
-    }
-
-    // Find the doctorId in the doctors collection based on the userId (userId is stored as userId in doctors)
-    const doctor = await mongoose.model('Doctor').findOne({ userId: new mongoose.Types.ObjectId(doctorUserId) });
-    
-    if (!doctor) {
-      return NextResponse.json({ success: false, error: 'Doctor not found' }, { status: 400 });
-    }
-
-    const doctorId = doctor._id; // Get the doctorId from the doctors collection
-    console.log('Doctor ID from doctors collection:', doctorId); // Log doctorId for debugging
-
-    // Get the appointment data from the request
-    const body = await request.json();
-    const { date, time } = body;
-
-    if (!date || !time || !doctorId) {
-      return NextResponse.json(
-        { success: false, error: 'doctorId, date, and time are required' },
-        { status: 400 }
-      );
-    }
+    if (!date || !time) throw new Error('Date and time are required');
 
     const appointmentDate = new Date(`${date}T${time}:00`);
+    if (isNaN(appointmentDate.getTime())) throw new Error('Invalid date/time');
 
-    // Ensure that the doctorId is stored as an ObjectId in the appointments collection
     const newAppointment = await Appointment.create({
-      doctorId: new mongoose.Types.ObjectId(doctorId), // Use doctorId from doctors collection as ObjectId
+      doctorId: doctor._id,
+      patientId: null, // Explicitly set to null
       appointmentDate,
-      status: 'pending',
+      status: 'pending', // Matches model default
       payment: {
-        amount: 0,
+        amount: doctor.price || 0,
+        method: 'card',
+        status: 'pending'
       },
+      diagnosis: '' // Explicitly set empty string
     });
 
-    return NextResponse.json({ success: true, appointment: newAppointment });
+    return NextResponse.json(
+      { success: true, appointment: newAppointment },
+      { status: 201 }
+    );
+
   } catch (error) {
-    console.error('POST /appointments error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
     );
   }
 }
-
-export async function GET(request) {
-  try {
-    await connectDB();
-
-    // Step 1: Extract the userId from the JWT token
-    const userId = await getDoctorIdFromToken();
-    console.log('User ID (from JWT) extracted:', userId); // Log for debugging
-
-    if (!userId) {
-      return NextResponse.json({ success: false, error: 'Doctor not logged in' }, { status: 400 });
-    }
-
-    // Step 2: Find the doctorId in the doctors collection based on the userId
-    const doctor = await mongoose.model('Doctor').findOne({ userId: new mongoose.Types.ObjectId(userId) });
-    console.log('Doctor found:', doctor); // Log the found doctor for debugging
-
-    if (!doctor) {
-      return NextResponse.json({ success: false, error: 'Doctor not found' }, { status: 400 });
-    }
-
-    const doctorId = doctor._id; // The actual doctorId in the doctors collection
-    console.log('Doctor ID from doctors collection:', doctorId); // Log doctorId for debugging
-
-    // Step 3: Convert doctorId to MongoDB ObjectId for querying the appointments collection
-    const doctorObjectId = new mongoose.Types.ObjectId(doctorId);
-    console.log('Doctor ObjectId for querying appointments:', doctorObjectId); // Log ObjectId for debugging
-
-    // Step 4: Query the appointments collection based on the doctorId
-    const appointments = await Appointment.find({ doctorId: doctorObjectId })
-      .populate('doctorId')
-      .populate('patientId');
-
-    console.log('Appointments fetched:', appointments); // Log the fetched appointments
-
-    if (!appointments || appointments.length === 0) {
-      return NextResponse.json({ success: true, appointments: [] });
-    }
-
-    return NextResponse.json({ success: true, appointments });
-  } catch (error) {
-    console.error('GET appointments error:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-}
-
-
-
-
-
-
-
-
-
-
-

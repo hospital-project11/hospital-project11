@@ -15,7 +15,7 @@ const appointmentSchema = new mongoose.Schema(
         appointmentDate: { type: Date, required: true },
         status: {
             type: String,
-            enum: ['pending', 'confirmed', 'cancelled'],
+            enum: ['pending', 'confirmed', 'cancelled','done'],
             default: 'pending',
         },
         diagnosis: {
@@ -23,7 +23,7 @@ const appointmentSchema = new mongoose.Schema(
             default: '',
         },
         payment: {
-            amount: { type: Number, required: true },
+            amount: { type: Number, required: true ,  default: 0, },
             method: {
                 type: String,
                 enum: ['card', 'paypal', 'cash'],

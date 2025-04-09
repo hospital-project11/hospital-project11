@@ -1,13 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Calendar as CalendarIcon, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import DoctorHeader from './DoctorHeader';
-import DashboardStats from './DashboardStats';
+import { Calendar as CalendarIcon, CheckCircle, XCircle, AlertCircle, Clock } from 'lucide-react';
 import AppointmentForm from './AppointmentForm';
 import AppointmentsView from './AppointmentsView';
 import AppointmentModal from './AppointmentModal';
-import Pagination from './Pagination'; // You'll need to create this component
+import Pagination from './Pagination';
+import DashboardStats from './DashboardStats';
+import DoctorHeader from './DoctorHeader';
 
 const DoctorDashboard = () => {
   const [appointments, setAppointments] = useState([]);
@@ -29,6 +29,27 @@ const DoctorDashboard = () => {
     dateRange: 'all'
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [toasts, setToasts] = useState([]);
+
+  // Color palette
+  const colors = {
+    primary: '#006A71',
+    secondary: '#48A6A7',
+    accent: '#9ACBD0',
+    background: '#f7fffd',
+    white: '#FFFFFF',
+    success: '#4CAF50',
+    warning: '#618300',
+    danger: '#F44336',
+    confirmed:'#007f83',
+    done: '#0027ff',
+    text: {
+      primary: '#1F2937',
+      secondary: '#4B5563',
+      light: '#6B7280'
+    }
+  };
+
   // Pagination state
   const [pagination, setPagination] = useState({
     page: 1,
@@ -39,21 +60,18 @@ const DoctorDashboard = () => {
     hasPrevPage: false
   });
 
-  // Color palette
-  const colors = {
-    primary: '#006A71',
-    secondary: '#48A6A7',
-    accent: '#9ACBD0',
-    background: '#F2EFE7',
-    white: '#FFFFFF',
-    success: '#4CAF50',
-    warning: '#FF9800',
-    danger: '#F44336',
-    text: {
-      primary: '#1F2937',
-      secondary: '#4B5563',
-      light: '#6B7280'
-    }
+  const addToast = (message, type = 'success') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+      removeToast(id);
+    }, 5000);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
   const fetchAppointments = async () => {
@@ -92,6 +110,7 @@ const DoctorDashboard = () => {
       }
     } catch (err) {
       setError(err.response?.data?.error || err.message);
+      addToast('Failed to load appointments', 'error');
     } finally {
       setLoading(false);
     }
@@ -99,7 +118,7 @@ const DoctorDashboard = () => {
 
   useEffect(() => {
     fetchAppointments();
-  }, [pagination.page, filters]); // Refetch when page or filters change
+  }, [pagination.page, filters]);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -109,7 +128,6 @@ const DoctorDashboard = () => {
   };
 
   const handleFilterChange = (name, value) => {
-    // Reset to page 1 when filters change
     if (name !== 'page') {
       setPagination(prev => ({
         ...prev,
@@ -152,12 +170,20 @@ const DoctorDashboard = () => {
         // Refresh appointments after creating a new one
         fetchAppointments();
         setFormData({ date: '', time: '' });
+        addToast('Appointment slot created successfully');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create appointment');
+      const errorMsg = err.response?.data?.error || 'Failed to create appointment';
+      setError(errorMsg);
+      addToast(errorMsg, 'error');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBulkSlotCreated = (count) => {
+    addToast(`Successfully created ${count} appointment slots`);
+    fetchAppointments(); // Refresh the appointments list
   };
 
   const handleAppointmentClick = (appointment) => {
@@ -172,8 +198,8 @@ const DoctorDashboard = () => {
         appt._id === updatedAppointment._id ? updatedAppointment : appt
       )
     );
-    // May want to refresh the data to ensure consistency
     fetchAppointments();
+    addToast('Appointment updated successfully');
   };
 
   const formatDateTime = (isoString, type) => {
@@ -194,7 +220,7 @@ const DoctorDashboard = () => {
     switch (status) {
       case 'confirmed':
         return {
-          color: colors.success,
+          color: colors.confirmed,
           bgColor: 'bg-green-100',
           textColor: 'text-green-800',
           icon: <CheckCircle className="h-4 w-4 mr-1" />
@@ -205,6 +231,13 @@ const DoctorDashboard = () => {
           bgColor: 'bg-red-100',
           textColor: 'text-red-800',
           icon: <XCircle className="h-4 w-4 mr-1" />
+        };
+      case 'done':
+        return {
+          color: colors.done,
+          bgColor: 'bg-blue-100',
+          textColor: 'text-blue-800',
+          icon: <Clock className="h-4 w-4 mr-1" />
         };
       default:
         return {
@@ -287,9 +320,43 @@ const DoctorDashboard = () => {
 
   return (
     <div className="min-h-screen mt-15" style={{ backgroundColor: colors.background }}>
+      {/* Toast container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map(toast => (
+          <div
+            key={toast.id}
+            className={`border-l-4 p-4 rounded-md flex items-start shadow-lg ${
+              toast.type === 'success' ? 'bg-green-50 border-green-500 text-green-700' :
+              toast.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' :
+              toast.type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-700' :
+              'bg-blue-50 border-blue-500 text-blue-700'
+            }`}
+          >
+            {toast.type === 'success' ? <CheckCircle className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0" /> :
+             toast.type === 'error' ? <XCircle className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0" /> :
+             <AlertCircle className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0" />}
+            <div className="flex-1">
+              <p className="font-medium">
+                {toast.type === 'success' ? 'Success!' : 
+                 toast.type === 'error' ? 'Error!' : 'Notice!'}
+              </p>
+              <p className="mt-1 text-sm">{toast.message}</p>
+            </div>
+            <button 
+              onClick={() => removeToast(toast.id)}
+              className="ml-4 text-gray-400 hover:text-gray-500"
+              aria-label="Dismiss notification"
+            >
+              <XCircle className="h-5 w-5" />
+            </button>
+          </div>
+        ))}
+      </div>
+      
       <div className="container mx-auto px-4 py-8">
         <DoctorHeader doctor={doctor} colors={colors} />
         <DashboardStats filteredAppointments={filteredAppointments} colors={colors} />
+        
         <AppointmentForm 
           formData={formData}
           handleInputChange={handleInputChange}
@@ -297,7 +364,9 @@ const DoctorDashboard = () => {
           isSubmitting={isSubmitting}
           error={error}
           colors={colors}
+          onSlotCreated={handleBulkSlotCreated}
         />
+        
         <AppointmentsView
           view={view}
           setView={setView}

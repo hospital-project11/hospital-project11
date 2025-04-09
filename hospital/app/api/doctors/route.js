@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
 const getAuthenticatedDoctor = async () => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   if (!token) throw new Error('Authentication required');
@@ -105,7 +105,7 @@ export async function GET(request) {
       // Lookup patient data
       {
         $lookup: {
-          from: 'patients', // Use your actual collection name for patients
+          from: 'users', // Use your actual collection name for patients
           localField: 'patientId',
           foreignField: '_id',
           as: 'patientData'
@@ -186,31 +186,50 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const doctor = await getAuthenticatedDoctor();
-    const { date, time } = await request.json();
+    const { timeSlots, date, startTime, endTime, duration, breakTime } = await request.json();
 
-    if (!date || !time) throw new Error('Date and time are required');
+    if (!date || !timeSlots || timeSlots.length === 0) {
+      throw new Error('Date and time slots are required');
+    }
 
-    const appointmentDate = new Date(`${date}T${time}:00`);
-    if (isNaN(appointmentDate.getTime())) throw new Error('Invalid date/time');
-
-    const newAppointment = await Appointment.create({
-      doctorId: doctor._id,
-      patientId: null, // Explicitly set to null
-      appointmentDate,
-      status: 'pending', // Matches model default
-      payment: {
-        amount: doctor.price || 0,
-        method: 'card',
-        status: 'pending'
-      },
-      diagnosis: '' // Explicitly set empty string
+    // Convert timeSlots to actual appointment dates
+    const appointmentDates = timeSlots.map(slot => {
+      const appointmentDate = new Date(`${date}T${slot.time}:00`);
+      if (isNaN(appointmentDate.getTime())) throw new Error('Invalid date/time for one or more slots');
+      return appointmentDate;
     });
 
-    return NextResponse.json(
-      { success: true, appointment: newAppointment },
-      { status: 201 }
+    // Check if any of the appointment times already exist in the database for this doctor
+    const existingAppointments = await Appointment.find({
+      doctorId: doctor._id,
+      appointmentDate: { $in: appointmentDates }
+    });
+
+    // If there are existing appointments, throw an error
+    if (existingAppointments.length > 0) {
+      throw new Error('One or more appointments already exist at the specified time.');
+    }
+
+    // Create new appointments if no conflicts
+    const createdAppointments = await Appointment.insertMany(
+      appointmentDates.map(appointmentDate => ({
+        doctorId: doctor._id,
+        patientId: null,  // Assuming no patient for now
+        appointmentDate,
+        status: 'pending',
+        payment: {
+          amount: doctor.price || 0,
+          method: 'card',
+          status: 'pending'
+        },
+        diagnosis: ''
+      }))
     );
 
+    return NextResponse.json(
+      { success: true, appointments: createdAppointments },
+      { status: 201 }
+    );
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },

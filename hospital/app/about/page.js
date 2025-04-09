@@ -1,10 +1,14 @@
 "use client"
 
-// pages/about.js
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 import Link from 'next/link';
+import { 
+  MessageCircle, 
+  Check, 
+  User,
+  ChevronRight
+} from 'lucide-react';
 
 export default function About() {
   const [isWhatsAppLoaded, setIsWhatsAppLoaded] = useState(false);
@@ -38,7 +42,7 @@ export default function About() {
       whatsappButton.style.transition = 'all 0.3s ease';
       whatsappButton.style.cursor = 'pointer';
       
-      // Create icon for button
+      // Create WhatsApp icon
       const whatsappIcon = document.createElement('div');
       whatsappIcon.innerHTML = `
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
@@ -106,10 +110,10 @@ export default function About() {
         <meta name="description" content="Learn about Lumera Hospital's mission, values, history and our dedicated team of healthcare professionals." />
       </Head>
 
-      <main className="bg-[#F2EFE7]">
-        {/* Hero Section */}
+      <main className="bg-gray-50">
+        {/* Hero Section with improved gradient */}
         <section className="relative h-96">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#006A71] to-[#48A6A7] opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-700 to-teal-500 opacity-90" />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-4">
             <h1 className="text-5xl font-bold mb-4 text-center">About Lumera Hospital</h1>
             <p className="text-xl max-w-2xl text-center">
@@ -118,70 +122,64 @@ export default function About() {
           </div>
         </section>
 
-        {/* Mission & Values */}
+        {/* Mission & Values with enhanced visual appeal */}
         <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-6 text-[#006A71]">Our Mission</h2>
+              <h2 className="text-3xl font-bold mb-6 text-teal-700">Our Mission</h2>
               <p className="text-lg mb-6">
                 At Lumera Hospital, our mission is to provide exceptional healthcare that improves the health and wellbeing of the communities we serve. We are committed to delivering patient-centered care with compassion, integrity, and excellence.
               </p>
-              <h2 className="text-3xl font-bold mb-6 text-[#006A71]">Our Values</h2>
+              <h2 className="text-3xl font-bold mb-6 text-teal-700">Our Values</h2>
               <ul className="space-y-4">
                 <li className="flex items-start">
-                  <div className="bg-[#9ACBD0] rounded-full p-1 mr-3 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  <div className="bg-teal-400 rounded-full p-1 mr-3 mt-1">
+                    <Check className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <span className="font-semibold text-[#006A71]">Excellence</span>
+                    <span className="font-semibold text-teal-700">Excellence</span>
                     <p>We strive for excellence in all aspects of healthcare delivery, continuously improving our services.</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <div className="bg-[#9ACBD0] rounded-full p-1 mr-3 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  <div className="bg-teal-400 rounded-full p-1 mr-3 mt-1">
+                    <Check className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <span className="font-semibold text-[#006A71]">Compassion</span>
+                    <span className="font-semibold text-teal-700">Compassion</span>
                     <p>We treat each patient with kindness, empathy, and respect, recognizing their unique needs.</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <div className="bg-[#9ACBD0] rounded-full p-1 mr-3 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  <div className="bg-teal-400 rounded-full p-1 mr-3 mt-1">
+                    <Check className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <span className="font-semibold text-[#006A71]">Innovation</span>
+                    <span className="font-semibold text-teal-700">Innovation</span>
                     <p>We embrace cutting-edge technologies and innovative approaches to enhance patient care.</p>
                   </div>
                 </li>
               </ul>
             </div>
-            <div className="bg-[#9ACBD0] p-8 rounded-lg shadow-lg">
+            <div className="bg-teal-400 p-8 rounded-lg shadow-lg">
               <div className="h-full flex flex-col justify-center">
                 <h3 className="text-2xl font-bold mb-4 text-white">Lumera by the Numbers</h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="text-center">
                     <p className="text-4xl font-bold text-white">500+</p>
-                    <p className="text-[#006A71] font-medium">Beds</p>
+                    <p className="text-teal-800 font-medium">Beds</p>
                   </div>
                   <div className="text-center">
                     <p className="text-4xl font-bold text-white">300+</p>
-                    <p className="text-[#006A71] font-medium">Physicians</p>
+                    <p className="text-teal-800 font-medium">Physicians</p>
                   </div>
                   <div className="text-center">
                     <p className="text-4xl font-bold text-white">50+</p>
-                    <p className="text-[#006A71] font-medium">Specialties</p>
+                    <p className="text-teal-800 font-medium">Specialties</p>
                   </div>
                   <div className="text-center">
                     <p className="text-4xl font-bold text-white">20</p>
-                    <p className="text-[#006A71] font-medium">Years of Excellence</p>
+                    <p className="text-teal-800 font-medium">Years of Excellence</p>
                   </div>
                 </div>
               </div>
@@ -189,33 +187,33 @@ export default function About() {
           </div>
         </section>
 
-        {/* Our History */}
+        {/* Our History with improved timeline */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <h2 className="text-3xl font-bold mb-12 text-center text-[#006A71]">Our History</h2>
+            <h2 className="text-3xl font-bold mb-12 text-center text-teal-700">Our History</h2>
             <div className="relative">
               {/* Timeline */}
-              <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-[#9ACBD0]"></div>
+              <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-teal-400"></div>
               
               {/* Timeline Items */}
               <div className="space-y-12">
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 md:pr-12 md:text-right">
-                    <div className="bg-[#F2EFE7] p-6 rounded-lg shadow">
-                      <h3 className="text-xl font-bold mb-2 text-[#006A71]">2005</h3>
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                      <h3 className="text-xl font-bold mb-2 text-teal-700">2005</h3>
                       <p>Lumera Hospital was founded with a vision to provide accessible and high-quality healthcare to our community.</p>
                     </div>
                   </div>
-                  <div className="hidden md:block w-4 h-4 bg-[#48A6A7] rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
+                  <div className="hidden md:block w-4 h-4 bg-teal-500 rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
                   <div className="md:w-1/2 md:pl-12 mt-6 md:mt-0"></div>
                 </div>
                 
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 md:pr-12"></div>
-                  <div className="hidden md:block w-4 h-4 bg-[#48A6A7] rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
+                  <div className="hidden md:block w-4 h-4 bg-teal-500 rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
                   <div className="md:w-1/2 md:pl-12 mt-6 md:mt-0">
-                    <div className="bg-[#F2EFE7] p-6 rounded-lg shadow">
-                      <h3 className="text-xl font-bold mb-2 text-[#006A71]">2010</h3>
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                      <h3 className="text-xl font-bold mb-2 text-teal-700">2010</h3>
                       <p>Expanded our facilities and added the state-of-the-art Cardiac Care Center and Women's Health Pavilion.</p>
                     </div>
                   </div>
@@ -223,21 +221,21 @@ export default function About() {
                 
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 md:pr-12 md:text-right">
-                    <div className="bg-[#F2EFE7] p-6 rounded-lg shadow">
-                      <h3 className="text-xl font-bold mb-2 text-[#006A71]">2015</h3>
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                      <h3 className="text-xl font-bold mb-2 text-teal-700">2015</h3>
                       <p>Achieved national recognition for excellence in patient care and innovative healthcare delivery models.</p>
                     </div>
                   </div>
-                  <div className="hidden md:block w-4 h-4 bg-[#48A6A7] rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
+                  <div className="hidden md:block w-4 h-4 bg-teal-500 rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
                   <div className="md:w-1/2 md:pl-12 mt-6 md:mt-0"></div>
                 </div>
                 
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 md:pr-12"></div>
-                  <div className="hidden md:block w-4 h-4 bg-[#48A6A7] rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
+                  <div className="hidden md:block w-4 h-4 bg-teal-500 rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
                   <div className="md:w-1/2 md:pl-12 mt-6 md:mt-0">
-                    <div className="bg-[#F2EFE7] p-6 rounded-lg shadow">
-                      <h3 className="text-xl font-bold mb-2 text-[#006A71]">2020</h3>
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                      <h3 className="text-xl font-bold mb-2 text-teal-700">2020</h3>
                       <p>Opened the Lumera Research Center, dedicating resources to advancing medical knowledge and treatments.</p>
                     </div>
                   </div>
@@ -245,12 +243,12 @@ export default function About() {
                 
                 <div className="flex flex-col md:flex-row items-center">
                   <div className="md:w-1/2 md:pr-12 md:text-right">
-                    <div className="bg-[#F2EFE7] p-6 rounded-lg shadow">
-                      <h3 className="text-xl font-bold mb-2 text-[#006A71]">2025</h3>
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                      <h3 className="text-xl font-bold mb-2 text-teal-700">2025</h3>
                       <p>Today, we continue our commitment to healthcare excellence with expanded telehealth services and cutting-edge treatments.</p>
                     </div>
                   </div>
-                  <div className="hidden md:block w-4 h-4 bg-[#48A6A7] rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
+                  <div className="hidden md:block w-4 h-4 bg-teal-500 rounded-full absolute left-1/2 transform -translate-x-1/2 border-4 border-white"></div>
                   <div className="md:w-1/2 md:pl-12 mt-6 md:mt-0"></div>
                 </div>
               </div>
@@ -258,47 +256,41 @@ export default function About() {
           </div>
         </section>
 
-        {/* Leadership Team */}
+        {/* Leadership Team with lucide-react icons */}
         <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center text-[#006A71]">Our Leadership Team</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center text-teal-700">Our Leadership Team</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Team Member 1 */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-[#9ACBD0] h-40 flex items-center justify-center">
-                <svg className="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                </svg>
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105">
+              <div className="bg-teal-400 h-40 flex items-center justify-center">
+                <User className="w-24 h-24 text-white" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-[#006A71]">Dr. Sarah Chen</h3>
+                <h3 className="text-xl font-bold mb-1 text-teal-700">Dr. Sarah Chen</h3>
                 <p className="text-sm text-gray-500 mb-3">Chief Executive Officer</p>
                 <p>With over 20 years of experience in healthcare management, Dr. Chen leads Lumera with a vision of innovation and excellence.</p>
               </div>
             </div>
 
             {/* Team Member 2 */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-[#48A6A7] h-40 flex items-center justify-center">
-                <svg className="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                </svg>
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105">
+              <div className="bg-teal-500 h-40 flex items-center justify-center">
+                <User className="w-24 h-24 text-white" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-[#006A71]">Dr. Michael Rodriguez</h3>
+                <h3 className="text-xl font-bold mb-1 text-teal-700">Dr. Michael Rodriguez</h3>
                 <p className="text-sm text-gray-500 mb-3">Chief Medical Officer</p>
                 <p>Dr. Rodriguez oversees all clinical operations, ensuring we maintain the highest standards of patient care and safety.</p>
               </div>
             </div>
 
             {/* Team Member 3 */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="bg-[#006A71] h-40 flex items-center justify-center">
-                <svg className="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
-                </svg>
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105">
+              <div className="bg-teal-700 h-40 flex items-center justify-center">
+                <User className="w-24 h-24 text-white" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-[#006A71]">Rebecca Johnson</h3>
+                <h3 className="text-xl font-bold mb-1 text-teal-700">Rebecca Johnson</h3>
                 <p className="text-sm text-gray-500 mb-3">Chief Nursing Officer</p>
                 <p>With a passion for patient-centered care, Rebecca leads our nursing staff in providing compassionate healthcare services.</p>
               </div>
@@ -306,8 +298,8 @@ export default function About() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-16 bg-gradient-to-r from-[#006A71] to-[#48A6A7] text-white">
+        {/* CTA Section with improved design */}
+        <section className="py-16 bg-gradient-to-r from-teal-700 to-teal-500 text-white">
           <div className="max-w-5xl mx-auto px-4 md:px-8 text-center">
             <h2 className="text-3xl font-bold mb-6">Join Our Team at Lumera Hospital</h2>
             <p className="text-xl mb-8 max-w-3xl mx-auto">
@@ -315,13 +307,15 @@ export default function About() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="http://localhost:3000/register">
-                <button className="bg-white text-[#006A71] px-8 py-3 rounded-full font-bold hover:bg-[#F2EFE7] transition duration-300">
+                <button className="bg-white text-teal-700 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition duration-300 flex items-center justify-center">
                   Register Now
+                  <ChevronRight className="ml-2 h-5 w-5" />
                 </button>
               </Link>
               <Link href="http://localhost:3000/contact">
-                <button className="border-2 border-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-[#006A71] transition duration-300">
+                <button className="border-2 border-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-teal-700 transition duration-300 flex items-center justify-center">
                   Contact Us
+                  <MessageCircle className="ml-2 h-5 w-5" />
                 </button>
               </Link>
             </div>

@@ -61,17 +61,17 @@ export async function POST(req) {
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return new Response(JSON.stringify({ message: "All fields are required" }), { status: 400 });
+      return new Response(JSON.stringify({}), { status: 400 });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return new Response(JSON.stringify({ message: "Invalid email or password" }), { status: 401 });
+      return new Response(JSON.stringify({}), { status: 401 });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return new Response(JSON.stringify({ message: "Invalid email or password" }), { status: 401 });
+      return new Response(JSON.stringify({}), { status: 401 });
     }
 
     const token = jwt.sign(
@@ -90,7 +90,7 @@ export async function POST(req) {
       sameSite: "strict",
     });
 
-    return new Response(JSON.stringify({ message: "Login successful", role: user.role }), {
+    return new Response(JSON.stringify({role: user.role }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export async function POST(req) {
 
   } catch (error) {
     console.error("Login error:", error);
-    return new Response(JSON.stringify({ message: "Server error" }), {
+    return new Response(JSON.stringify({}), {
       status: 500,
       headers: {
         "Content-Type": "application/json",

@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
         default: 'patient',
     },
     createdAt: { type: Date, default: Date.now },
+    isDeleted: { 
+        type: Boolean, 
+        default: false 
+    },
 });
 
 export default mongoose.models.User || mongoose.model('User', userSchema);

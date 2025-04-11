@@ -1,9 +1,10 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Calendar from 'react-calendar';  // Importing the calendar component
-import 'react-calendar/dist/Calendar.css';  // Importing the CSS for the calendar
+import Calendar from 'react-calendar'; 
+import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/navigation';
+import PaymentModal from './PaymentModal';
 
 const categories = [
   'Vision Correction', 
@@ -12,14 +13,17 @@ const categories = [
   'Pediatric Eye Care', 
   'Glaucoma Management', 
   'Routine Eye Exams'
-];  // Categories to filter appointments
+];
 
 export default function AvailableAppointments() {
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [doctorName, setDoctorName] = useState('');  
-  const [selectedCategory, setSelectedCategory] = useState('');  
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPaymentData, setSelectedPaymentData] = useState({ appointmentId: null, price: null });
+  
   const router = useRouter();
 
   useEffect(() => {
@@ -27,13 +31,11 @@ export default function AvailableAppointments() {
       try {
         const selectedDateString = selectedDate.toISOString().split('T')[0];
         const res = await axios.get(`/api/appointments?date=${selectedDateString}&doctorName=${doctorName}&category=${selectedCategory}`);
-        
         setAppointments(res.data.appointments);
       } catch (error) {
         console.error('Error fetching appointments:', error);
       }
     };
-
     fetchAppointments();
   }, [selectedDate, doctorName, selectedCategory]);
 
@@ -49,24 +51,17 @@ export default function AvailableAppointments() {
   };
 
   useEffect(() => {
-    filterAppointmentsByDateDoctorAndCategory();  // Filter appointments when `appointments`, `selectedDate`, `doctorName`, or `selectedCategory` changes
+    filterAppointmentsByDateDoctorAndCategory();
   }, [appointments, selectedDate, doctorName, selectedCategory]);
 
   const handleBooking = (appointmentId, price) => {
-    router.push(`/payment?appointmentId=${appointmentId}&price=${price}`);
+    setSelectedPaymentData({ appointmentId, price });
+    setShowPaymentModal(true);
   };
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
-  const handleDoctorNameChange = (e) => {
-    setDoctorName(e.target.value);
-  };
-
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);  
-  };
+  const handleDateChange = (date) => setSelectedDate(date);
+  const handleDoctorNameChange = (e) => setDoctorName(e.target.value);
+  const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
 
   return (
     <div className="min-h-screen bg-white pt-22">
@@ -100,10 +95,7 @@ export default function AvailableAppointments() {
                     background-color: rgba(72, 166, 167, 0.1);
                   }
                 `}</style>
-                <Calendar
-                  onChange={handleDateChange}
-                  value={selectedDate}
-                />
+                <Calendar onChange={handleDateChange} value={selectedDate} />
               </div>
             </div>
 
@@ -151,13 +143,13 @@ export default function AvailableAppointments() {
         {/* Display filtered appointments */}
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4 text-[#48A6A7]">
-            Appointments for {selectedDate.toLocaleDateString(undefined, {month: 'long', day: 'numeric', year: 'numeric'})}
+            Appointments for {selectedDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
           </h2>
           
           {filteredAppointments.length === 0 ? (
             <div className="flex items-center justify-center p-12 rounded-lg bg-gray-50 border border-gray-100">
               <div className="text-center">
-                <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <p className="text-gray-500 text-lg">No appointments available for the selected criteria.</p>
@@ -179,32 +171,32 @@ export default function AvailableAppointments() {
                   
                   <div className="p-5">
                     <div className="flex items-center mb-3">
-                      <svg className="w-5 h-5 text-[#48A6A7] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-5 h-5 text-[#48A6A7] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
                       <span className="text-gray-700">
                         {new Date(appt.appointmentDate).toLocaleDateString(undefined, {
                           weekday: 'short',
-                          month: 'short', 
+                          month: 'short',
                           day: 'numeric'
                         })}
                       </span>
                     </div>
                     
                     <div className="flex items-center mb-3">
-                      <svg className="w-5 h-5 text-[#48A6A7] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-5 h-5 text-[#48A6A7] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                       <span className="text-gray-700">
                         {new Date(appt.appointmentDate).toLocaleTimeString(undefined, {
-                          hour: '2-digit', 
+                          hour: '2-digit',
                           minute: '2-digit'
                         })}
                       </span>
                     </div>
                     
                     <div className="flex items-center mb-5">
-                      <svg className="w-5 h-5 text-[#48A6A7] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-5 h-5 text-[#48A6A7] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                       <span className="font-bold text-[#48A6A7] text-lg">{appt.doctorId?.price} JD</span>
@@ -216,8 +208,8 @@ export default function AvailableAppointments() {
                       onClick={() => handleBooking(appt._id, appt.doctorId?.price)}
                       className="w-full bg-[#48A6A7] hover:bg-opacity-90 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
                     >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
                       </svg>
                       Book Now
                     </button>
@@ -228,6 +220,15 @@ export default function AvailableAppointments() {
           )}
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <PaymentModal
+          appointmentId={selectedPaymentData.appointmentId}
+          price={selectedPaymentData.price}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
     </div>
   );
 }

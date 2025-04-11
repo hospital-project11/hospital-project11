@@ -145,10 +145,6 @@ const Navbar = () => {
               <Link href="/admin-dashboard">Admin DashBorad</Link>
             </button>
             )}
-            <button className="flex items-center w-full px-4 py-3 text-left text-gray-800 hover:bg-gray-50">
-              <Bell className="h-5 w-5 mr-3 text-gray-600" />
-              <Link href="/">Notifications</Link>
-            </button>
             
             <div className="border-t border-gray-100 my-1"></div>
             

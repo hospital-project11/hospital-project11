@@ -23,6 +23,7 @@ export default function AvailableAppointments() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedPaymentData, setSelectedPaymentData] = useState({ appointmentId: null, price: null });
+  const [userEmail, setUserEmail] = useState(null);
   
   const router = useRouter();
 
@@ -59,9 +60,35 @@ export default function AvailableAppointments() {
     setShowPaymentModal(true);
   };
 
+  // useEffect(() => {
+  //   const checkLogin = async () => {
+  //     try {
+  //       const res = await axios.get('/api/auth/me', { withCredentials: true });
+  //       console.log("tttttttttt"+res.data.email);
+  //       setUserEmail(res.data.email);
+  //     } catch (err) {
+  //       console.error("errrorrrrrrrr :", err);
+  //     }
+  //   };
+  //   checkLogin();
+  // }, []);
+
+    const sendEmail = async (doctorId) => {
+      console.log(doctorId);
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          doctorId: doctorId
+        }),
+      });
+    }
+
   const handleDateChange = (date) => setSelectedDate(date);
   const handleDoctorNameChange = (e) => setDoctorName(e.target.value);
   const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
+
+ 
 
   return (
     <div className="min-h-screen bg-white pt-22">
@@ -205,7 +232,7 @@ export default function AvailableAppointments() {
                   
                   <div className="px-5 pb-5">
                     <button
-                      onClick={() => handleBooking(appt._id, appt.doctorId?.price)}
+                      onClick={() => {handleBooking(appt._id, appt.doctorId?.price), sendEmail(appt.doctorId.userId._id)}}
                       className="w-full bg-[#48A6A7] hover:bg-opacity-90 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
                     >
                       <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

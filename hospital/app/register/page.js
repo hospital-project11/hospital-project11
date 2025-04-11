@@ -124,7 +124,7 @@ export default function RegisterPage() {
 
         
         setTimeout(() => {
-          router.push('/');
+          router.push('/login');
         }, 1500); 
       } else {
         toast.error(res.data.message || "Registration failed");

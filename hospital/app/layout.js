@@ -9,6 +9,7 @@ import './styles/globals.css';
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
+  const isAuthPage = pathname === '/login' || pathname === '/register';
 
   return (
     <html lang="en">
@@ -25,9 +26,9 @@ export default function RootLayout({ children }) {
           </div>
         ) : (
           <>
-            <Navbar />
+            {!isAuthPage && <Navbar />}
             <main>{children}</main>
-            <Footer />
+            {!isAuthPage && <Footer />}
           </>
         )}
       </body>

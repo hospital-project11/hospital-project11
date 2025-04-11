@@ -12,7 +12,8 @@ const categories = [
   'Cataract Treatment', 
   'Pediatric Eye Care', 
   'Glaucoma Management', 
-  'Routine Eye Exams'
+  'Routine Eye Exams',
+  "Children's eyes"
 ];
 
 export default function AvailableAppointments() {

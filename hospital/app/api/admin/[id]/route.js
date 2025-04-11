@@ -1,7 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/user";
 
-// In your /api/admin/[id] route (DELETE handler)
 export async function DELETE(req, { params }) {
     const { id } = params;
   

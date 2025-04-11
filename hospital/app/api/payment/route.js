@@ -1,39 +1,75 @@
-import mongoose from "mongoose";
-import Appointment from "../../models/appointment";
-import { connectToDatabase } from "../../../lib/mongodb"; // تأكد من أن مسار الاتصال صحيح
+import { NextResponse } from 'next/server';
+import { connectDB } from '@/lib/mongodb';
+import Appointment from '@/models/appointment';
+import jwt from 'jsonwebtoken';  
+import { cookies } from 'next/headers';  
 
-export default async function handler(req, res) {
-    if (req.method === "POST") {
-        try {
-            await connectToDatabase();
+const getPatientIdFromToken = () => {
+  const cookieStore = cookies();
+  const token = cookieStore.get('token')?.value;
+  
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+  
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  
+  return decoded.userId; 
+};
 
-            const { appointmentId, paymentMethod } = req.body;
-
-            // جلب بيانات الموعد من قاعدة البيانات
-            const appointment = await Appointment.findById(appointmentId).populate(
-                "patientId doctorId"
-            );
-            if (!appointment)
-                return res.status(404).json({ message: "Appointment not found" });
-
-            appointment.payment.method = paymentMethod;
-            appointment.payment.status = "pending";
-            appointment.payment.paidAt = new Date();
-
-            await appointment.save();
-
-            return res.status(200).json({
-                patientName: appointment.patientId.name,
-                price: appointment.payment.amount,
-                paymentMethods: ["cash", "paypal", "card"],
-                paymentStatus: appointment.payment.status,
-                appointmentId: appointment._id,
-            });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Server error" });
-        }
-    } else {
-        res.status(405).json({ message: "Method Not Allowed" });
+export async function POST(request) {
+  try {
+    await connectDB();
+    const body = await request.json();
+    const { appointmentId, price } = body;
+    
+    if (!appointmentId || !price) {
+      return NextResponse.json(
+        { success: false, error: 'Missing appointmentId or price' },
+        { status: 400 }
+      );
     }
+
+    const patientId = getPatientIdFromToken();
+    
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      {
+        status: 'confirmed',
+        patientId: patientId,  
+        'payment.amount': price,
+        'payment.method': 'paypal',
+        'payment.status': 'paid',
+        'payment.paidAt': new Date(),
+      },
+      { new: true }
+    )
+      .populate('patientId', 'name email phone') 
+      .populate({
+        path: 'doctorId',
+        populate: {
+          path: 'userId',
+          select: 'name email',
+        },
+        select: 'specialization price',
+      });
+
+    if (!updatedAppointment) {
+      return NextResponse.json(
+        { success: false, error: 'Appointment not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      appointment: updatedAppointment,
+    });
+    
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
 }

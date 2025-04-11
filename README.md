@@ -110,8 +110,8 @@ We followed **Agile Methodology** and worked collaboratively over 6 days using t
 
 ## 📎 Project Links
 
-- 🔗 **Wireframe & Mockup (Figma):** [[Add your Figma link here](https://www.figma.com/design/SWrsOp5Z2kaKk4BWNVoA9l/Untitled?node-id=1-7&p=f&t=HAQUyQYmPbIJLBVI-0)]
-- 🔗 **Trello Board:** [[Add your Trello link here](https://trello.com/b/PqEOdNLF/group-1)]
+- [ 🔗 **Wireframe & Mockup (Figma):**](https://www.figma.com/design/SWrsOp5Z2kaKk4BWNVoA9l/Untitled?node-id=1-7&p=f&t=HAQUyQYmPbIJLBVI-0)
+- [ 🔗 **Trello Board:**](https://trello.com/b/PqEOdNLF/group-1)
 
 ---
 

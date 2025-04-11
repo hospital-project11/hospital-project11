@@ -1,39 +1,63 @@
-import { connectDB } from "@/lib/mongodb";
-import Appointment from "@/models/appointment";
+// app/api/appointments/[appointmentId]/route.js
+import { connectDB } from '@/lib/mongoose';
+import Appointment from '@/models/appointment';
+import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 
-export async function GET(req, { params }) {
-  // Access dynamic parameter from params
-  const { id } = params; // 'id' is the dynamic route parameter from the folder name [id]
-
-  // Make sure id exists
-  if (!id) {
-    return new Response(
-      JSON.stringify({ success: false, message: "id (patientId) is required" }),
-      { status: 400 }
-    );
-  }
-
-  await connectDB();
-
+export async function GET(request, { params }) {
   try {
-    // Fetch appointments where the id matches the patientId
-    const appointments = await Appointment.find({ patientId: id }).populate('doctorId', 'name');
+    await connectDB();
+    
+    const { appointmentId } = params;
+    
+    // Validate appointmentId format
+    if (!appointmentId || !mongoose.Types.ObjectId.isValid(appointmentId)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid appointment ID format' },
+        { status: 400 }
+      );
+    }
 
-    if (appointments.length === 0) {
-      return new Response(
-        JSON.stringify({ success: false, message: "No appointments found for this patient." }),
+    // Find the appointment with populated data
+    const appointment = await Appointment.findById(appointmentId)
+      .populate({
+        path: 'patientId',
+        select: 'name email phone',
+        model: 'User'
+      })
+      .populate({
+        path: 'doctorId',
+        populate: {
+          path: 'userId',
+          select: 'name email phone',
+          model: 'User'
+        }
+      })
+      .lean(); // Convert to plain JavaScript object
+
+    if (!appointment) {
+      return NextResponse.json(
+        { success: false, error: 'Appointment not found' },
         { status: 404 }
       );
     }
 
-    return new Response(
-      JSON.stringify({ success: true, data: appointments }),
-      { status: 200 }
-    );
+    // Transform the data structure if needed
+    const transformedAppointment = {
+      ...appointment,
+      patientId: appointment.patientId || null,
+      doctorId: appointment.doctorId || null
+    };
+
+    return NextResponse.json({
+      success: true,
+      appointment: transformedAppointment
+    });
+
   } catch (error) {
-    console.error('Error fetching appointments:', error);
-    return new Response(
-      JSON.stringify({ success: false, message: 'Failed to fetch appointments' }),
+    console.error('Error fetching appointment:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }

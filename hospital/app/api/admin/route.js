@@ -13,53 +13,6 @@ export async function GET() {
   }
 }
 
-export async function PUT(request) {
-  await connectDB();
-
-  const {
-    userId,
-    newRole,
-    specialization,
-    price,
-    experience,
-    bio,
-    category,
-    availableSlots,
-  } = await request.json();
-
-  try {
-    // تحديث الدور في جدول المستخدمين
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { role: newRole },
-      { new: true }
-    );
-
-    // إذا أصبح المستخدم دكتورًا، أنشئ له سجل جديد في doctors
-    if (newRole === "doctor") {
-      const doctorExists = await Doctor.findOne({ userId });
-
-      if (!doctorExists) {
-        await Doctor.create({
-          userId,
-          specialization,
-          price,
-          experience: experience || 0,
-          bio: bio || "",
-          category: category || "",
-          availableSlots: availableSlots || [],
-        });
-      }
-    }
-
-    return Response.json({ message: "تم التحديث بنجاح", updatedUser });
-  } catch (error) {
-    console.error(error);
-    return Response.json({ error: "فشل التحديث" }, { status: 500 });
-  }
-}
-
-
 export async function POST(request) {
   await connectDB();
 
@@ -69,7 +22,7 @@ export async function POST(request) {
     password,
     phone,
     gender,
-    role,  // either 'patient' or 'doctor'
+    role,
     specialization,
     price,
     experience,

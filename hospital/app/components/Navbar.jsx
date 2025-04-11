@@ -57,7 +57,6 @@ const Navbar = () => {
     try {
       const res = await axios.post("/api/auth/logout", {}, { withCredentials: true });
       if (res.status === 200) {
-        alert("Successful logout ✅");
         setIsLoggedIn(false);
         router.push("/login");
       } else {

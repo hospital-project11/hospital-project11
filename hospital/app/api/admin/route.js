@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import Doctor from "@/models/doctor";
+import bcrypt from "bcryptjs";
 
 export async function GET() {
   await connectDB();
@@ -31,12 +32,14 @@ export async function POST(request) {
     availableSlots,
   } = await request.json();
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   try {
     // 1. Create the new user
     const newUser = new User({
       name,
       email,
-      password,
+      password : hashedPassword,
       phone,
       gender,
       role,

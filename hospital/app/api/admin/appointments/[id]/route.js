@@ -2,10 +2,8 @@ import { connectDB } from "@/lib/mongodb";
 import Appointment from "@/models/appointment";
 
 export async function GET(req, { params }) {
-  // Access dynamic parameter from params
-  const { id } = params; // 'id' is the dynamic route parameter from the folder name [id]
+  const { id } = params; 
 
-  // Make sure id exists
   if (!id) {
     return new Response(
       JSON.stringify({ success: false, message: "id (patientId) is required" }),
@@ -16,7 +14,6 @@ export async function GET(req, { params }) {
   await connectDB();
 
   try {
-    // Fetch appointments where the id matches the patientId
     const appointments = await Appointment.find({ patientId: id }).populate('doctorId', 'name');
 
     if (appointments.length === 0) {

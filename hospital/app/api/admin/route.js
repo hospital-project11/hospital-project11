@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import Doctor from "@/models/doctor";
+import bcrypt from "bcryptjs";
 
 export async function GET() {
   await connectDB();
@@ -13,12 +14,16 @@ export async function GET() {
   }
 }
 
-export async function PUT(request) {
+export async function POST(request) {
   await connectDB();
 
   const {
-    userId,
-    newRole,
+    name,
+    email,
+    password,
+    phone,
+    gender,
+    role,
     specialization,
     price,
     experience,
@@ -27,34 +32,41 @@ export async function PUT(request) {
     availableSlots,
   } = await request.json();
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   try {
-    // تحديث الدور في جدول المستخدمين
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { role: newRole },
-      { new: true }
-    );
+    // 1. Create the new user
+    const newUser = new User({
+      name,
+      email,
+      password : hashedPassword,
+      phone,
+      gender,
+      role,
+    });
 
-    // إذا أصبح المستخدم دكتورًا، أنشئ له سجل جديد في doctors
-    if (newRole === "doctor") {
-      const doctorExists = await Doctor.findOne({ userId });
+    // Save the new user
+    const savedUser = await newUser.save();
 
-      if (!doctorExists) {
-        await Doctor.create({
-          userId,
-          specialization,
-          price,
-          experience: experience || 0,
-          bio: bio || "",
-          category: category || "",
-          availableSlots: availableSlots || [],
-        });
-      }
+    // 2. If the user is a doctor, create a new doctor record
+    if (role === "doctor") {
+      const newDoctor = new Doctor({
+        userId: savedUser._id,
+        specialization,
+        price,
+        experience: experience || 0,
+        bio: bio || "",
+        category: category || "",
+        availableSlots: availableSlots || [],
+      });
+
+      // Save the doctor record
+      await newDoctor.save();
     }
 
-    return Response.json({ message: "تم التحديث بنجاح", updatedUser });
+    return Response.json({ message: "تم إنشاء المستخدم والدكتور بنجاح", savedUser });
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "فشل التحديث" }, { status: 500 });
+    return Response.json({ error: "فشل في إنشاء المستخدم" }, { status: 500 });
   }
 }

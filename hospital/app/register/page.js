@@ -1,14 +1,21 @@
-// "use client";
+// 'use client';
+
 // import { useState } from "react";
 // import axios from 'axios';
+// import Link from 'next/link';
+// import { toast, ToastContainer } from 'react-toastify'; 
+// import 'react-toastify/dist/ReactToastify.css'; 
+// import { useRouter } from 'next/navigation';
 
 // export default function RegisterPage() {
 //   const [form, setForm] = useState({
 //     name: "",
 //     email: "",
 //     password: "",
+//     phone: ""
 //   });
-//   const [message, setMessage] = useState("");
+
+//   const router = useRouter(); 
 
 //   const handleChange = (e) => {
 //     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,7 +23,6 @@
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
-//     setMessage("");
 
 //     try {
 //       const res = await axios.post('/api/auth/register', form, {
@@ -25,73 +31,30 @@
 //         },
 //       });
 
-//       if (res.status === 200) {
-//         setMessage("Account created successfully ✅");
-//         setForm({ name: "", email: "", password: "" });
+//       if (res.status === 201) {
+//         toast.success("Account created successfully ✅");
+//         setForm({ name: "", email: "", password: "", phone: "" });
+
+        
+//         setTimeout(() => {
+//           router.push('/login');
+//         }, 1500); 
 //       } else {
-//         setMessage(res.data.message || "Registration failed");
+//         toast.error(res.data.message || "Registration failed");
 //       }
 //     } catch (err) {
-//       setMessage("Something went wrong");
+//       toast.error(err.response?.data?.message || "Something went wrong");
 //       console.error("error: " + err);
 //     }
 //   };
-
-//   return (
-//     <section className="py-10 bg-gray-50">
-//       <div className="max-w-md mx-auto bg-white shadow-md rounded p-6">
-//         <h2 className="text-2xl font-bold mb-4 text-center">Create Account</h2>
-//         <form onSubmit={handleSubmit} className="space-y-4">
-//           <input
-//             type="text"
-//             name="name"
-//             placeholder="Full name"
-//             value={form.name}
-//             onChange={handleChange}
-//             required
-//             className="w-full px-4 py-2 border rounded"
-//           />
-//           <input
-//             type="email"
-//             name="email"
-//             placeholder="Email"
-//             value={form.email}
-//             onChange={handleChange}
-//             required
-//             className="w-full px-4 py-2 border rounded"
-//           />
-//           <input
-//             type="password"
-//             name="password"
-//             placeholder="Password"
-//             value={form.password}
-//             onChange={handleChange}
-//             required
-//             className="w-full px-4 py-2 border rounded"
-//           />
-//           <button
-//             type="submit"
-//             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-//           >
-//             Register
-//           </button>
-//         </form>
-//         {message && (
-//           <p className="mt-4 text-center text-sm text-red-500">{message}</p>
-//         )}
-//       </div>
-//     </section>
-//   );
-// }
-
 
 'use client';
 
 import { useState } from "react";
 import axios from 'axios';
 import Link from 'next/link';
-import { toast, ToastContainer } from 'react-toastify'; // تأكد من استيراد ToastContainer هنا
-import 'react-toastify/dist/ReactToastify.css'; // تأكد من أنك قد استوردت الـ CSS الخاصة بالـ Toast
+import { toast, ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
@@ -99,10 +62,9 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
-    phone: ""
   });
 
-  const router = useRouter(); // تعريف router
+  const router = useRouter(); 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -120,9 +82,8 @@ export default function RegisterPage() {
 
       if (res.status === 201) {
         toast.success("Account created successfully ✅");
-        setForm({ name: "", email: "", password: "", phone: "" });
+        setForm({ name: "", email: "", password: "" });
 
-        
         setTimeout(() => {
           router.push('/login');
         }, 1500); 
@@ -134,6 +95,7 @@ export default function RegisterPage() {
       console.error("error: " + err);
     }
   };
+
 
   
   return (
@@ -355,19 +317,6 @@ export default function RegisterPage() {
 
 
 
-      {/* <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className="w-6 h-6 text-[#48A6A7]"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div> */}
 
 
 
@@ -377,49 +326,3 @@ export default function RegisterPage() {
 
 
 
-
-                {/* <div className="md:hidden">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className="w-6 h-6 text-yellow-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <blockquote className="mt-6">
-              <p className="text-lg leading-relaxed text-white">
-                You made it so simple. My new site is so much faster and easier to
-                work with than my old site. I just choose the page, make the change
-                and click save.
-              </p>
-            </blockquote>
-            <div className="flex items-center mt-8">
-              <img
-                className="flex-shrink-0 object-cover w-10 h-10 rounded-full"
-                src="https://cdn.rareblocks.xyz/collection/celebration/images/contact/4/avatar.jpg"
-                alt=""
-              />
-              <div className="ml-4">
-                <p className="text-base font-semibold text-white">Jenny Wilson</p>
-                <p className="mt-px text-sm text-gray-400">Product Designer</p>
-              </div>
-            </div>
-          </div> */}
-
-
-
-
-
-
-
-          {/* {message && (
-                <p className={`mt-4 text-center text-sm ${message.includes("successfully") ? "text-green-500" : "text-red-500"}`}>
-                  {message}
-                </p>
-              )} */}

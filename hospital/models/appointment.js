@@ -36,6 +36,7 @@ const appointmentSchema = new mongoose.Schema(
             },
             paidAt: { type: Date },
         },
+        isDeleted: { type: Boolean, default: false },
         createdAt: { type: Date, default: Date.now },
     },
     { timestamps: true }

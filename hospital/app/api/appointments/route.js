@@ -15,6 +15,7 @@ export async function GET(request) {
       let query = {
         status: 'pending',
         appointmentDate: { $gte: new Date() },
+        'payment.status': { $ne: 'paid' },
       };
   
       if (date) {
@@ -53,6 +54,8 @@ export async function POST(request) {
     await connectDB();
     const data = await request.json();  
     const appointment = new Appointment({
+
+
       doctorId: data.doctorId,
       patientId: data.patientId,
       appointmentDate: new Date(data.appointmentDate),  

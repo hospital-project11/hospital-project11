@@ -1,3 +1,6 @@
+
+import Link from 'next/link';
+
 export default function HomePage() {
   const locations = [
     {
@@ -71,7 +74,7 @@ export default function HomePage() {
             </p>
             
             <button className="bg-[#48A6A7] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-teal-400 transition-all mt-4">
-            Book Appointment
+            <Link href="/available-appointments">Book Appointment</Link>
             </button>
           </div>
           
@@ -91,12 +94,12 @@ export default function HomePage() {
           </p>
         </div>
         <div className="mt-6 md:mt-0">
-          <a href="#" className="inline-flex items-center px-6 py-3 bg-[#48A6A7] text-white rounded-full font-medium hover:bg-[#006A71] transition-colors">
+          <Link href="/about" className="inline-flex items-center px-6 py-3 bg-[#48A6A7] text-white rounded-full font-medium hover:bg-[#006A71] transition-colors">
             Learn More
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -355,8 +358,8 @@ export default function HomePage() {
               Contact us with any query or any idea.
             </p>
           </div>
-          <a
-            href="#"
+          <Link
+            href="/contact"
             className="flex items-center gap-2 bg-white rounded-full shadow-sm text-lg text-[#006A71] font-semibold py-4 px-8 transition-all duration-500"
             >Get In Touch
             <svg
@@ -374,7 +377,7 @@ export default function HomePage() {
                 strokeLinejoin="round"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

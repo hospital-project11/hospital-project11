@@ -266,7 +266,7 @@ export default function About() {
                 <User className="w-24 h-24 text-white" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-teal-700">Dr. Sarah Chen</h3>
+                <h3 className="text-xl font-bold mb-1 text-teal-700">Dr. Deya'a Abualrub</h3>
                 <p className="text-sm text-gray-500 mb-3">Chief Executive Officer</p>
                 <p>With over 20 years of experience in healthcare management, Dr. Chen leads Lumera with a vision of innovation and excellence.</p>
               </div>
@@ -278,7 +278,7 @@ export default function About() {
                 <User className="w-24 h-24 text-white" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-teal-700">Dr. Michael Rodriguez</h3>
+                <h3 className="text-xl font-bold mb-1 text-teal-700">Dr. Ajloni Al-Ajloni</h3>
                 <p className="text-sm text-gray-500 mb-3">Chief Medical Officer</p>
                 <p>Dr. Rodriguez oversees all clinical operations, ensuring we maintain the highest standards of patient care and safety.</p>
               </div>
@@ -290,7 +290,7 @@ export default function About() {
                 <User className="w-24 h-24 text-white" />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-1 text-teal-700">Rebecca Johnson</h3>
+                <h3 className="text-xl font-bold mb-1 text-teal-700">Hasan Mansour</h3>
                 <p className="text-sm text-gray-500 mb-3">Chief Nursing Officer</p>
                 <p>With a passion for patient-centered care, Rebecca leads our nursing staff in providing compassionate healthcare services.</p>
               </div>

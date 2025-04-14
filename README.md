@@ -6,18 +6,6 @@
 
 ---
 
-## 👨‍👩‍👧‍👦 Team Members & Roles
-
-- **Mohammed Ajlouni** – Scrum Master  
-- **Deya'a Abualrub** – Product Owner  
-- **Hasan Mansour** – Quality Assurance  
-- **Rana Bani Salameh** – Developer  
-- **Ghufran Hijazi** – Developer  
-- **Nour Salah** – Developer  
-- **Bilal Alzaro** – Developer  
-
----
-
 ## 🧠 Project Context
 
 As junior web developers, we were tasked with building a hospital management system for managing hospital operations including:
@@ -113,33 +101,5 @@ We followed **Agile Methodology** and worked collaboratively over 6 days using t
 - [ 🔗 **Wireframe & Mockup (Figma):**](https://www.figma.com/design/SWrsOp5Z2kaKk4BWNVoA9l/Untitled?node-id=1-7&p=f&t=HAQUyQYmPbIJLBVI-0)
 - [ 🔗 **Trello Board:**](https://trello.com/b/PqEOdNLF/group-1)
 
----
-
-## ✅ Deliverables
-
-- ✅ Fully functional website with all required features
-- ✅ Responsive design across all screen sizes
-- ✅ Mockup and wireframes identical to final implementation
-- ✅ Trello board with tasks and progress
-- ✅ Group collaboration and GitHub contributions
-- ✅ Final presentation and feature demo
-
----
-
-## 📅 Deadline
-
-**11-April-2025, 11:59 PM**
-
----
-
-## 📊 Performance Criteria
-
-- [x] Functionality and responsiveness  
-- [x] User-friendly experience for all roles  
-- [x] Complete documentation and wireframes  
-- [x] Collaborative team work using Git & Trello  
-- [x] Clear and organized project presentation
-
----
 
 > **Thank you for visiting our project repository! We're proud to present Lumera – a modern, secure, and user-friendly hospital management system for the future of eye care. 👁️✨**

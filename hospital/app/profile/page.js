@@ -16,8 +16,135 @@ import {
   Clock3,
   AlertCircle,
   FileText,
+  MessageSquare,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
+
+
+
+
+
+  // New Feedback Modal
+  const FeedbackModal = ({
+    show,
+    onClose,
+    feedbackText,
+    setFeedbackText,
+    rating,
+    setRating,
+    isSubmittingFeedback,
+    handleSubmitFeedback,
+    brandColor,
+    brandColorLight,
+  }) => {
+    if (!show) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold" style={{ color: brandColor }}>
+              Your Feedback
+            </h3>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full hover:bg-gray-100"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="border-t border-gray-200 pt-4">
+            {/* Star Rating */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Rate your experience
+              </label>
+              <div className="flex items-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    className="p-1"
+                  >
+                    <Star
+                      size={24}
+                      className={`${
+                        star <= rating
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <label className="block text-gray-700 font-medium mb-2">
+              Your comments
+            </label>
+            <textarea
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              placeholder="Share your experience with this appointment..."
+              rows={5}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
+              style={{ focusRing: brandColorLight }}
+            ></textarea>
+          </div>
+
+          <div className="mt-6 flex justify-end space-x-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmitFeedback}
+              disabled={isSubmittingFeedback}
+              style={{ backgroundColor: brandColor }}
+              className="px-5 py-2 rounded-lg text-white font-medium hover:bg-opacity-90 flex items-center"
+            >
+              {isSubmittingFeedback ? (
+                <svg
+                  className="animate-spin h-5 w-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                "Submit Feedback"
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
+
+
+
+
+
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -32,6 +159,12 @@ export default function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [showDiagnosisModal, setShowDiagnosisModal] = useState(false);
   const [selectedDiagnosis, setSelectedDiagnosis] = useState("");
+  // New state for feedback functionality
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [rating, setRating] = useState(0);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   // Brand color: rgb(72, 166, 167)
   const brandColor = "rgb(72, 166, 167)";
@@ -206,6 +339,50 @@ export default function ProfilePage() {
     setShowDiagnosisModal(true);
   };
 
+  // New functions for feedback
+  const handleOpenFeedbackModal = (appointmentId, existingFeedback = "") => {
+    setSelectedAppointmentId(appointmentId);
+    setFeedbackText(existingFeedback);
+    setShowFeedbackModal(true);
+  };
+
+ const handleSubmitFeedback = async () => {
+    if (!selectedAppointmentId) return;
+
+    try {
+      setIsSubmittingFeedback(true);
+      setError(null);
+      
+      // Fixed: using selectedAppointmentId instead of appointmentId
+      const response = await axios.post("/api/user/feedback", {
+        appointmentId: selectedAppointmentId,
+        feedback: feedbackText,
+        rating: rating,
+      });
+      
+      // Update the appointment in the local state
+      setPastAppointments((prevAppointments) =>
+        prevAppointments.map((appointment) => {
+          if (appointment._id === selectedAppointmentId) {
+            return { ...appointment, feedback: feedbackText };
+          }
+          return appointment;
+        })
+      );
+
+      setShowFeedbackModal(false);
+      setFeedbackText("");
+      setRating(0);
+      setSelectedAppointmentId("");
+    } catch (err) {
+      console.error("Error submitting feedback:", err);
+      setError("Failed to submit feedback");
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
+  };
+
+
   const DiagnosisModal = () => {
     if (!showDiagnosisModal) return null;
 
@@ -242,6 +419,8 @@ export default function ProfilePage() {
     );
   };
 
+
+
   if (error) {
     return (
       <div className="max-w-4xl mx-auto mt-24 mb-24 p-8 rounded-lg shadow-lg bg-white">
@@ -277,6 +456,18 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen pt-24 pb-32 bg-gray-50">
       <DiagnosisModal />
+      <FeedbackModal
+        show={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+        feedbackText={feedbackText}
+        setFeedbackText={setFeedbackText}
+        rating={rating}
+        setRating={setRating}
+        isSubmittingFeedback={isSubmittingFeedback}
+        handleSubmitFeedback={handleSubmitFeedback}
+        brandColor={brandColor}
+        brandColorLight={brandColorLight}
+      />
       <div className="max-w-5xl mx-auto p-8 rounded-xl shadow-lg bg-white">
         {/* Profile Header */}
         <div className="mb-8">
@@ -707,7 +898,6 @@ export default function ProfilePage() {
                         >
                           Dr. {appointment.doctorId?.name || "Unknown"}
                         </h3>
-
                         <div className="flex items-center mt-3 text-gray-600">
                           <Calendar size={18} className="mr-2" />
                           <p>{formatDate(appointment.appointmentDate)}</p>
@@ -799,18 +989,61 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
+                    {/* Display Feedback if exists */}
+                    {appointment.feedback && (
+                      <div className="mt-4 p-4 rounded-lg bg-yellow-50 border border-yellow-100">
+                        <div className="flex items-center mb-2">
+                          <MessageSquare
+                            size={16}
+                            className="text-yellow-600 mr-2"
+                          />
+                          <h4 className="font-medium text-yellow-800">
+                            Your Feedback
+                          </h4>
+                        </div>
+                        <p className="text-gray-700">{appointment.feedback}</p>
+                      </div>
+                    )}
+
                     <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
                       {appointment.status === "done" && (
-                        <button
-                          onClick={() =>
-                            handleViewDiagnosis(appointment.diagnosis)
-                          }
-                          style={{ backgroundColor: brandColor }}
-                          className="inline-flex items-center text-white px-4 py-2 rounded-lg transition-all text-sm font-medium hover:bg-opacity-90"
-                        >
-                          <FileText size={16} className="mr-2" />
-                          View Diagnosis
-                        </button>
+                        <>
+                          <button
+                            onClick={() =>
+                              handleViewDiagnosis(appointment.diagnosis)
+                            }
+                            style={{ backgroundColor: brandColor }}
+                            className="inline-flex items-center text-white px-4 py-2 rounded-lg transition-all text-sm font-medium hover:bg-opacity-90"
+                          >
+                            <FileText size={16} className="mr-2" />
+                            View Diagnosis
+                          </button>
+
+                          {/* Add Feedback button - only show if appointment is done and no feedback exists */}
+                          <button
+                            onClick={() =>
+                              handleOpenFeedbackModal(
+                                appointment._id,
+                                appointment.feedback
+                              )
+                            }
+                            className={`inline-flex items-center px-4 py-2 rounded-lg transition-all text-sm font-medium hover:bg-opacity-90 ${
+                              appointment.feedback
+                                ? "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                                : "text-white"
+                            }`}
+                            style={{
+                              backgroundColor: appointment.feedback
+                                ? undefined
+                                : brandColor,
+                            }}
+                          >
+                            <MessageSquare size={16} className="mr-2" />
+                            {appointment.feedback
+                              ? "Edit Feedback"
+                              : "Add Feedback"}
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
